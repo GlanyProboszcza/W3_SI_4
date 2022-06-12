@@ -6,11 +6,15 @@
 
 #include <tabulate/table.hpp>
 
-
+//creating structure of task
+//initializing structure fields with some default values
+//if we forget to enter data to these fields, these values will already be there
 struct singleTask {
-	std::string taskName;
-	bool isImportant;
-	std::time_t dueDate;
+	std::string taskName = "New_task";
+	bool isImportant = false;
+	std::time_t dueDate = std::time(nullptr);
+	char isDone[2] = " "; //this is the character used to define if task is done
+	// it can either be "X" or " "
 };
 
 std::vector<singleTask> allTasks;

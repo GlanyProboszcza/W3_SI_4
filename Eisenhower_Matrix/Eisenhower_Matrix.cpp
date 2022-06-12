@@ -1,6 +1,5 @@
 ﻿#include "Eisenhower_Matrix.hpp"
 
-
 //https://stackoverflow.com/a/48512134/14918235 used as is without too much understanding
 // just removed the time (to only handle date and moved to year-month-day instead of US date format
 std::time_t dateString2Time(const char& locTimeString)
@@ -44,12 +43,17 @@ bool checkUrgency(const std::time_t& locDueDate)
     return false;
 }
 
+
 void printMatrix(const std::vector<singleTask>& locAllTasks)
 {
     //https://theblogrelay.com/wp-content/uploads/2021/03/Eisenhower-Matrix.png
-    std::string DoNow = "", Schedule = "", Delegate = "", Delete = ""; //?
+    //define 4 string variables and initiate them with empty strings
+    //each one corresponds to one of four cells of Eisenhower matrix
+    std::string DoNow = "", Schedule = "", Delegate = "", Delete = "";
+    //define new tabulate object
+    //  later this object is used and new rows, columns etc are added to it
     tabulate::Table table;
-    //iterating over all tasks
+    //iterating over all tasks vector (each element of this vector is a structure
     for (int i = 0; i < size(locAllTasks); ++i)
     {
         //Check if this (number - i) task was marked as important by user
@@ -60,25 +64,35 @@ void printMatrix(const std::vector<singleTask>& locAllTasks)
             //if urgent & important >> 'Do now'
             if (checkUrgency(locAllTasks[i].dueDate))
             {
-                DoNow = DoNow + locAllTasks[i].taskName + "\n";
-            }//if !urgent & important >> 'Schedule'
-            else
+                //here we add something to the string variable for first eisenhower matrix cell
+                // if the DoNow variable already had previous task we will add to it:
+                //  > add number of the task (i), but we increment this value, since people count from 1, not 0
+                //  > convert this intiger value to string, since "+" operator will expect such type to concatenate strings
+                //  > next " [" string is combined (concatenated) to previous strings
+                //  > here we concatenate either " " (space" or "X" marking this task as done or not done
+                //  > then we add "] " and current task name is added
+                //  > in the end new line character is added
+                //THIS REPEATS FOR EACH MATRIX' CELL
+                DoNow = DoNow + std::to_string(i + 1) + " [" + locAllTasks[i].isDone + "] " + locAllTasks[i].taskName + "\n";
+                //Do now
+            }
+            else //if !urgent & important >> 'Schedule'
             {
-                Schedule = Schedule + locAllTasks[i].taskName + "\n";
+                Schedule = Schedule + std::to_string(i + 1) + " [" + locAllTasks[i].isDone + "] " + locAllTasks[i].taskName + "\n";
                 //Schedule
             }
         }//If not important this will be either 'Delegate' or 'Delete' columnt of second row
         //if !important & urgent >> 'Delegate'
         else if (checkUrgency(locAllTasks[i].dueDate))
         {
-            Delegate = Delegate + locAllTasks[i].taskName + "\n";
+            Delegate = Delegate + std::to_string(i + 1) + " [" + locAllTasks[i].isDone + "] " + locAllTasks[i].taskName + "\n";
             //Delegate
 
         }
         else //if !important & !urgent >> 'Delete'
         {
+            Delete = Delete + std::to_string(i + 1) + " [" + locAllTasks[i].isDone + "] " + locAllTasks[i].taskName + "\n";
             //Delete
-            Delete = Delete + locAllTasks[i].taskName + "\n";
         }
     }
 
@@ -128,6 +142,8 @@ int main() {
     allTasks.push_back(singleTask());
     allTasks[0].isImportant = true;
     allTasks[1].isImportant = false;
+    strcpy_s(allTasks[0].isDone, "X");
+    strcpy_s(allTasks[1].isDone, " ");
     allTasks[0].taskName = "dupa1";
     allTasks[1].taskName = "dupa2";
     allTasks[0].dueDate = dateString2Time(*"2022-06-20"); //not urgent >> more than 3 days ahead
