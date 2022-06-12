@@ -1,7 +1,6 @@
 ﻿#include "Eisenhower_Matrix.hpp"
 
 
-
 //https://stackoverflow.com/a/48512134/14918235 used as is without too much understanding
 // just removed the time (to only handle date and moved to year-month-day instead of US date format
 std::time_t dateString2Time(const char& locTimeString)
@@ -24,9 +23,25 @@ std::time_t dateString2Time(const char& locTimeString)
     //return std::time_t();
 }
 
+//simple function which returns true or false
+//takes one parameter, which is a reference (&) to variable of type time_t. 
+//      since it has a const prefix, it will not be able to modify the referene/variable - there is no reason for it to edit it
 bool checkUrgency(const std::time_t& locDueDate)
 {
-    return true;
+    int timeDiff = 0;
+    //difftime is cpp standard function. 
+    //it return time in seconds between two dates of type time_t
+    //we are saving memory by converting the result to int (we don't need floating point precission)
+    timeDiff = int(std::difftime(locDueDate, std::time(nullptr)));
+    //check if timeDiff is less than 3 days 259200 in seconds
+    if (timeDiff <= 259200)
+    {
+        //if we are less than 3 days from deadline, return true <-- the task is URGENT!
+        return true;
+    }
+    //if we did not return true above, the execution will reach this line..
+    //.. and return false, since the task doesn't seem to be urgent
+    return false;
 }
 
 void printMatrix(const std::vector<singleTask>& locAllTasks)
@@ -115,8 +130,8 @@ int main() {
     allTasks[1].isImportant = false;
     allTasks[0].taskName = "dupa1";
     allTasks[1].taskName = "dupa2";
-    allTasks[0].dueDate = dateString2Time(*"2022-06-20");
-    allTasks[1].dueDate = dateString2Time(*"2022-06-13");
+    allTasks[0].dueDate = dateString2Time(*"2022-06-20"); //not urgent >> more than 3 days ahead
+    allTasks[1].dueDate = dateString2Time(*"2022-06-13"); //urgent >> less than 3 days ahead
     printMatrix(allTasks);
 
 }
