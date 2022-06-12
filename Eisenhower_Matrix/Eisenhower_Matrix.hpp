@@ -1,15 +1,22 @@
 #pragma once
 
 #include <iostream>
-#include <iomanip>
-#include <string>
 #include <ctime>
+#include <vector>
 
-int welcomeBoard();
-int importanceOfaTask();
-int welcomeMenu();
-std::string newTask();
-int markTask();
-int delTask();
-int delMark();
+#include <tabulate/table.hpp>
+
+
+struct singleTask {
+	std::string taskName;
+	bool isImportant;
+	std::time_t dueDate;
+};
+
+std::vector<singleTask> allTasks;
+
+bool checkUrgency(const std::time_t& locDueDate);
+void printMatrix(const std::vector<singleTask>& locAllTasks);
+
+std::time_t dateString2Time(const char& locTimeString);
 
