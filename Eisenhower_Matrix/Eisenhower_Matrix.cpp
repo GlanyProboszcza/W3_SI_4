@@ -1,6 +1,5 @@
 ﻿#include "Eisenhower_Matrix.hpp"
 
-
 //https://stackoverflow.com/a/48512134/14918235 used as is without too much understanding
 // just removed the time (to only handle date and moved to year-month-day instead of US date format
 std::time_t dateString2Time(const char& locTimeString)
@@ -46,7 +45,9 @@ void addTask(std::vector<singleTask>& locAllTasks)
     std::cout << "Provide task name: ";
     //Directly saving user's input to task name field 
     //                  in singeTask structure in newly added element of allTasks vector
-    std::cin >> allTasks[lastItemIndex].taskName;
+    std::cin.ignore();
+    //std::cin >> allTasks[lastItemIndex].taskName; //this method was using spaces as separators of input. Did not work correctly
+    std::getline(std::cin, allTasks[lastItemIndex].taskName);
     std::cout << std::endl << "Provide due date, format is: yyyy-mm-dd: ";
     //Saving user's input to temporary string, to be later converted to time_t
     std::cin >> dateTempString;
@@ -97,6 +98,15 @@ void changeTaskStatus(std::vector<singleTask>& locAllTasks, short taskToChange)
     {
         strcpy_s(allTasks[taskToChange].isDone, " ");
     }
+}
+
+short mainMenu(void)
+{
+    char userChoice;
+    std::cout << "\nWhat do You want to do? \n1. Display TO DO board \n2. Add new task\n3. Change task state "
+        "\n4. Delete task \n5. Archive and save tasks\n6. Save tasks and EXIT\n>> " << std::endl;
+    std::cin >> userChoice;
+    return userChoice;
 }
 
 //simple function which returns true or false
@@ -212,7 +222,11 @@ void printMatrix(const std::vector<singleTask>& locAllTasks)
 
 
 int main() {
-    std::cout << "Welcome to Task Manager!" << std::endl;
+    std::cout << "+------------------------------------+\n" << std::endl;
+    std::cout << "+- Welcome to the Eisenhower Matrix -+\n" << std::endl;
+    std::cout << "+------------------------------------+\n" << std::endl;
+
+    //creating test task entries
     allTasks.push_back(singleTask());
     allTasks.push_back(singleTask());
     allTasks[0].isImportant = true;
@@ -223,14 +237,61 @@ int main() {
     allTasks[1].taskName = "dupa2";
     allTasks[0].dueDate = dateString2Time(*"2022-06-20"); //not urgent >> more than 3 days ahead
     allTasks[1].dueDate = dateString2Time(*"2022-06-13"); //urgent >> less than 3 days ahead
+    //end creating test task entries
+
     printMatrix(allTasks);
+    char userChoice;
+    while (true)
+    {
+        userChoice = mainMenu();
+        std::cout << userChoice << std::endl;
+        char taskNumber = 0;
+        switch (userChoice)
+        {
+        case '1': printMatrix(allTasks);
+            break;
+        case '2': addTask(allTasks);
+            break;
+        case '3':
+            taskNumber = 0;
+            printMatrix(allTasks);
+            std::cout << "Which task number you want to change?: ";
+            std::cin >> taskNumber;
+            changeTaskStatus(allTasks, taskNumber - 48 - 1);
+            std::cout << "Done!" << std::endl;
+            printMatrix(allTasks);
+            break;
+        case '4':
+            taskNumber = 0;
+            printMatrix(allTasks);
+            std::cout << "Which task number you want to remove?: ";
+            std::cin >> taskNumber;
+            std::cout << "Delete not supported yet!" << std::endl;
+            printMatrix(allTasks);
+            break;
+        case '5':
+            return 0;
+            break;
+        case '6':
+            return 0;
+            break;
+        default: return 0;
+        }
+
+
+
+    }
     changeTaskStatus(allTasks, 0);
+    changeTaskStatus(allTasks, 1);
     printMatrix(allTasks);
+    addTask(allTasks);
+    /*
     while (true)
     {
         addTask(allTasks);
         printMatrix(allTasks);
     }
+    */
 
 
 }

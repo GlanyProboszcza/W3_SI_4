@@ -24,4 +24,5 @@ void printMatrix(const std::vector<singleTask>& locAllTasks);
 std::time_t dateString2Time(const char& locTimeString);
 void addTask(std::vector<singleTask>& locAllTasks);
 void changeTaskStatus(std::vector<singleTask>& locAllTasks, short taskToChange);
+short mainMenu(void);
 
